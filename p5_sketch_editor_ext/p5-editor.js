@@ -21,7 +21,24 @@
 
   var FILES = ['html', 'css', 'js']; // volgorde van de tabs
 
-  function createEditor(container) {
+  // Ingebouwde fallback-teksten (zodat het ook zonder server werkt).
+  var FALLBACK = { run: 'Run', reset: 'Reset' };
+  var SELF = (document.currentScript && document.currentScript.src) || '';
+  var BASE = SELF.replace(/[^/]*$/, '');
+
+  function currentLang() {
+    var l = localStorage.getItem('p5e-lang') || document.documentElement.lang || 'nl';
+    return l === 'en' ? 'en' : 'nl';
+  }
+  function loadStrings(cb) {
+    var lang = currentLang();
+    fetch(BASE + 'lang/' + lang + '.json')
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (s) { cb(Object.assign({}, FALLBACK, s), lang); })
+      .catch(function () { cb(FALLBACK, lang); });
+  }
+
+  function createEditor(container, S, lang) {
     // Welke bestanden horen bij deze editor?
     var sources = {
       html: container.dataset.html || '',
@@ -37,8 +54,12 @@
       '    <button class="p5e-tab" type="button" data-file="js">JS</button>' +
       '  </span>' +
       '  <span class="p5e-actions">' +
-      '    <button class="p5e-btn p5e-run" type="button">Run</button>' +
-      '    <button class="p5e-btn p5e-reset" type="button">Reset</button>' +
+      '    <button class="p5e-btn p5e-run" type="button">' + S.run + '</button>' +
+      '    <button class="p5e-btn p5e-reset" type="button">' + S.reset + '</button>' +
+      '    <span class="p5e-lang">' +
+      '      <a href="#" data-lang="nl"' + (lang === 'nl' ? ' class="is-current"' : '') + '>NL</a>' +
+      '      <a href="#" data-lang="en"' + (lang === 'en' ? ' class="is-current"' : '') + '>EN</a>' +
+      '    </span>' +
       '  </span>' +
       '</div>' +
       '<div class="p5e-split">' +
@@ -92,6 +113,15 @@
       run();
     });
 
+    // Taalknop: keuze onthouden en de pagina herladen.
+    container.querySelectorAll('.p5e-lang a').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        localStorage.setItem('p5e-lang', a.dataset.lang);
+        location.reload();
+      });
+    });
+
     // Tab in een veld voegt twee spaties in.
     FILES.forEach(function (f) {
       areas[f].addEventListener('keydown', function (e) {
@@ -124,19 +154,20 @@
     });
   }
 
-  function init() {
+  function init(S, lang) {
     var list = document.querySelectorAll('.p5-editor:not([data-ready])');
     for (var i = 0; i < list.length; i++) {
       list[i].setAttribute('data-ready', '');
-      createEditor(list[i]);
+      createEditor(list[i], S, lang);
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  window.P5Editor = { init: init };
+  loadStrings(function (S, lang) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { init(S, lang); });
+    } else {
+      init(S, lang);
+    }
+    window.P5Editor = { init: function () { init(S, lang); } };
+  });
 })();

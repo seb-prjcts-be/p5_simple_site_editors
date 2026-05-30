@@ -13,8 +13,9 @@
  * en laad dit script. Elke .p5-editor wordt automatisch een editor met
  * een code-paneel links en een live preview rechts.
  *
- * Geen build-stap, geen dependencies. p5.js wordt uit de CDN geladen
- * in een afgeschermde iframe, zodat de sketch de pagina niet kan breken.
+ * Teksten staan in lang/nl.json en lang/en.json; de taalknop (NL/EN) onthoudt
+ * de keuze in localStorage. Lukt het laden niet (bv. via file://), dan wordt
+ * teruggevallen op de ingebouwde NL-teksten.
  */
 (function () {
   'use strict';
@@ -22,18 +23,42 @@
   // Welke p5-versie de previews gebruiken. Pas hier één keer aan.
   var P5_CDN = 'https://cdn.jsdelivr.net/npm/p5@2.2.3/lib/p5.min.js';
 
+  // Ingebouwde fallback-teksten (zodat het ook zonder server werkt).
+  var FALLBACK = { title: 'p5.js', run: 'Run', reset: 'Reset' };
+
+  // Map van dit script, zodat lang/ relatief klopt los van de host-pagina.
+  var SELF = (document.currentScript && document.currentScript.src) || '';
+  var BASE = SELF.replace(/[^/]*$/, '');
+
+  function currentLang() {
+    var l = localStorage.getItem('p5e-lang') || document.documentElement.lang || 'nl';
+    return l === 'en' ? 'en' : 'nl';
+  }
+
+  // Laad de teksten van de gekozen taal en roep cb(strings, lang) aan.
+  function loadStrings(cb) {
+    var lang = currentLang();
+    fetch(BASE + 'lang/' + lang + '.json')
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (s) { cb(Object.assign({}, FALLBACK, s), lang); })
+      .catch(function () { cb(FALLBACK, lang); });
+  }
+
   // Bouw één editor in de gegeven container.
-  function createEditor(container) {
-    // Code ophalen: uit <script type="text/p5"> of uit data-code="".
+  function createEditor(container, S, lang) {
     var script = container.querySelector('script[type="text/p5"]');
     var code = script ? script.textContent.trim() : (container.dataset.code || '');
 
     container.innerHTML =
       '<div class="p5e-bar">' +
-      '  <span class="p5e-title">p5.js</span>' +
+      '  <span class="p5e-title">' + S.title + '</span>' +
       '  <span class="p5e-actions">' +
-      '    <button class="p5e-btn p5e-run" type="button">Run</button>' +
-      '    <button class="p5e-btn p5e-reset" type="button">Reset</button>' +
+      '    <button class="p5e-btn p5e-run" type="button">' + S.run + '</button>' +
+      '    <button class="p5e-btn p5e-reset" type="button">' + S.reset + '</button>' +
+      '    <span class="p5e-lang">' +
+      '      <a href="#" data-lang="nl"' + (lang === 'nl' ? ' class="is-current"' : '') + '>NL</a>' +
+      '      <a href="#" data-lang="en"' + (lang === 'en' ? ' class="is-current"' : '') + '>EN</a>' +
+      '    </span>' +
       '  </span>' +
       '</div>' +
       '<div class="p5e-split">' +
@@ -66,6 +91,15 @@
       run();
     });
 
+    // Taalknop: keuze onthouden en de pagina herladen.
+    container.querySelectorAll('.p5e-lang a').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        localStorage.setItem('p5e-lang', a.dataset.lang);
+        location.reload();
+      });
+    });
+
     // Tab in de textarea voegt twee spaties in i.p.v. focus te verplaatsen.
     textarea.addEventListener('keydown', function (e) {
       if (e.key !== 'Tab') return;
@@ -79,21 +113,20 @@
     run(); // Auto-run bij laden.
   }
 
-  // Initialiseer alle .p5-editor containers die nog niet klaar zijn.
-  function init() {
+  function init(S, lang) {
     var list = document.querySelectorAll('.p5-editor:not([data-ready])');
     for (var i = 0; i < list.length; i++) {
       list[i].setAttribute('data-ready', '');
-      createEditor(list[i]);
+      createEditor(list[i], S, lang);
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  // Mini publieke API, voor het geval je editors dynamisch toevoegt.
-  window.P5Editor = { init: init };
+  loadStrings(function (S, lang) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { init(S, lang); });
+    } else {
+      init(S, lang);
+    }
+    window.P5Editor = { init: function () { init(S, lang); } };
+  });
 })();

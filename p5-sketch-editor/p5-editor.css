@@ -27,7 +27,30 @@
 
 .p5e-actions {
   display: inline-flex;
+  align-items: center;
   gap: 0.4rem;
+}
+
+/* Taalknop (NL | EN). */
+.p5e-lang {
+  display: inline-flex;
+  gap: 0.3rem;
+  margin-left: 0.3rem;
+  font-size: 0.7rem;
+}
+
+.p5e-lang a {
+  color: var(--p5e-light, #888);
+  text-decoration: none;
+}
+
+.p5e-lang a:hover {
+  color: #000;
+}
+
+.p5e-lang a.is-current {
+  color: var(--p5e-accent);
+  font-weight: 600;
 }
 
 .p5e-btn {

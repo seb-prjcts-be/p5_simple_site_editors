@@ -34,36 +34,42 @@ Elke map heeft een eigen `README.md` met details.
 
 ## Vertalen
 
-Alle zichtbare teksten staan als gewone strings in de broncode — geen
-vertaalframework nodig. Pas ze gewoon aan:
+Elke editor heeft een **`lang/`-map met `nl.json` en `en.json`** — alle
+UI-teksten staan daarin, geen framework nodig. Een **NL/EN-knop** in de balk
+schakelt en onthoudt de keuze.
 
-| Wat | Waar |
-|---|---|
-| Knop-labels (`Run`, `Reset`) | bovenaan in elk `p5-editor.js`, in de `innerHTML`-string |
-| Tab-labels (`HTML`/`CSS`/`JS`) | `p5_sketch_editor_ext/p5-editor.js` |
-| Menu-labels (`Sketch`, `Bestand`, `Opslaan`, `Nieuw bestand…`, …) | `p5_sketch_editor_php/index.php`, in de `<div class="ed-menu">`-blokken |
-| Pop-up teksten (`prompt` / `confirm`) | de `window.*`-functies in `editor.js` / `p5-editor.js` |
-| Foutmeldingen | de `fail(...)`-aanroepen in `p5_sketch_editor_php/index.php` |
-| Uitleg / introtekst | de `index.html` van elke editor + deze landingspagina |
-| Oefening-labels (partial) | de tekst na `//show` in je eigen sketch |
+- **Een tekst aanpassen** → wijzig de waarde in `lang/nl.json` (of `en.json`).
+- **Een taal toevoegen** → kopieer `nl.json` naar bv. `fr.json`, vertaal de
+  waarden. (De ingebouwde knop toont NL/EN; voeg je taal toe aan de knop in de
+  editor-JS, of zet `localStorage['p5e-lang'] = 'fr'`.)
 
-Voor de partial-editor hoef je niets in de code te wijzigen: het label komt uit
-het `//show <label>`-commentaar van de sketch zelf.
+| Editor | Taalbestanden | Hoe geladen |
+|---|---|---|
+| client-side (basis, partial, ext) | `lang/nl.json`, `lang/en.json` | via `fetch`; valt terug op ingebouwde NL-tekst als laden niet lukt (bv. `file://`) |
+| PHP | `lang/nl.json`, `lang/en.json` | server-side ingelezen; `?lang=nl/en` + cookie onthoudt de keuze |
+
+Twee dingen vertaal je **niet** via JSON, want ze horen bij de inhoud:
+- de tekst van de demo-sketch zelf (`index.html` / `script.js` van een sketch);
+- het oefening-label van de partial-editor — dat komt uit het
+  `//show <label>`-commentaar in de sketch.
 
 ## Translation (English)
 
-All visible text lives as plain strings in the source — no i18n framework
-needed. Just edit them in place:
+Every editor has a **`lang/` folder with `nl.json` and `en.json`** — all UI text
+lives there, no framework needed. An **NL/EN switch** in the toolbar toggles and
+remembers the choice.
 
-| What | Where |
-|---|---|
-| Button labels (`Run`, `Reset`) | top of each `p5-editor.js`, inside the `innerHTML` string |
-| Tab labels (`HTML`/`CSS`/`JS`) | `p5_sketch_editor_ext/p5-editor.js` |
-| Menu labels (`Sketch`, `Bestand`, `Opslaan`, …) | `p5_sketch_editor_php/index.php`, in the `<div class="ed-menu">` blocks |
-| Pop-up text (`prompt` / `confirm`) | the `window.*` functions in `editor.js` / `p5-editor.js` |
-| Error messages | the `fail(...)` calls in `p5_sketch_editor_php/index.php` |
-| Intro / help text | each editor's `index.html` + this landing page |
-| Exercise labels (partial) | the text after `//show` in your own sketch |
+- **Change a string** → edit the value in `lang/nl.json` (or `en.json`).
+- **Add a language** → copy `nl.json` to e.g. `fr.json`, translate the values.
+  (The built-in switch shows NL/EN; add your language to the switch in the
+  editor JS, or set `localStorage['p5e-lang'] = 'fr'`.)
 
-For the partial editor you don't touch the code at all: the label comes from the
-`//show <label>` comment in the sketch itself.
+| Editor | Language files | How loaded |
+|---|---|---|
+| client-side (basis, partial, ext) | `lang/nl.json`, `lang/en.json` | via `fetch`; falls back to built-in NL text if loading fails (e.g. `file://`) |
+| PHP | `lang/nl.json`, `lang/en.json` | read server-side; `?lang=nl/en` + cookie remembers the choice |
+
+Two things are **not** translated via JSON, because they are content:
+- the demo sketch's own text (`index.html` / `script.js` of a sketch);
+- the partial editor's exercise label — that comes from the `//show <label>`
+  comment in the sketch.

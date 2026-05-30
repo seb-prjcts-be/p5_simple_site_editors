@@ -25,6 +25,23 @@
   var SHOW = /^\s*\/\/\s*show\b\s*(.*)$/i;
   var END = /^\s*\/\/\s*end\b/i;
 
+  // Ingebouwde fallback-teksten (zodat het ook zonder server werkt).
+  var FALLBACK = { title: 'p5.js', reset: 'Reset', note: 'Geen bewerkbaar blok gemarkeerd (//show … //end).' };
+  var SELF = (document.currentScript && document.currentScript.src) || '';
+  var BASE = SELF.replace(/[^/]*$/, '');
+
+  function currentLang() {
+    var l = localStorage.getItem('p5e-lang') || document.documentElement.lang || 'nl';
+    return l === 'en' ? 'en' : 'nl';
+  }
+  function loadStrings(cb) {
+    var lang = currentLang();
+    fetch(BASE + 'lang/' + lang + '.json')
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (s) { cb(Object.assign({}, FALLBACK, s), lang); })
+      .catch(function () { cb(FALLBACK, lang); });
+  }
+
   // Strip de gemeenschappelijke inspringing zodat het blok netjes oogt.
   function dedent(lines) {
     var min = Infinity;
@@ -37,7 +54,7 @@
     return lines.map(function (l) { return l.slice(min); }).join('\n');
   }
 
-  function createEditor(container) {
+  function createEditor(container, S, lang) {
     var script = container.querySelector('script[type="text/p5"]');
     var template = script
       ? script.textContent.replace(/^\s*\n/, '').replace(/\s+$/, '')
@@ -75,8 +92,14 @@
     container.innerHTML =
       '<div class="p5p">' +
       '  <div class="p5p-bar">' +
-      '    <span class="p5p-title">p5.js</span>' +
-      '    <button class="p5p-reset" type="button">Reset</button>' +
+      '    <span class="p5p-title">' + S.title + '</span>' +
+      '    <span class="p5p-actions">' +
+      '      <button class="p5p-reset" type="button">' + S.reset + '</button>' +
+      '      <span class="p5e-lang">' +
+      '        <a href="#" data-lang="nl"' + (lang === 'nl' ? ' class="is-current"' : '') + '>NL</a>' +
+      '        <a href="#" data-lang="en"' + (lang === 'en' ? ' class="is-current"' : '') + '>EN</a>' +
+      '      </span>' +
+      '    </span>' +
       '  </div>' +
       '  <div class="p5p-split">' +
       '    <div class="p5p-controls"></div>' +
@@ -87,8 +110,17 @@
     var controls = container.querySelector('.p5p-controls');
     var preview = container.querySelector('.p5p-preview');
 
+    // Taalknop: keuze onthouden en de pagina herladen.
+    container.querySelectorAll('.p5e-lang a').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        localStorage.setItem('p5e-lang', a.dataset.lang);
+        location.reload();
+      });
+    });
+
     if (!fields.length) {
-      controls.innerHTML = '<p class="p5p-note">Geen bewerkbaar blok gemarkeerd (//show … //end).</p>';
+      controls.innerHTML = '<p class="p5p-note">' + S.note + '</p>';
     }
 
     var timer = null;
@@ -160,19 +192,20 @@
     run(); // toon meteen het resultaat
   }
 
-  function init() {
+  function init(S, lang) {
     var list = document.querySelectorAll('.p5-editor:not([data-ready])');
     for (var i = 0; i < list.length; i++) {
       list[i].setAttribute('data-ready', '');
-      createEditor(list[i]);
+      createEditor(list[i], S, lang);
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  window.P5Partial = { init: init };
+  loadStrings(function (S, lang) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { init(S, lang); });
+    } else {
+      init(S, lang);
+    }
+    window.P5Partial = { init: function () { init(S, lang); } };
+  });
 })();
