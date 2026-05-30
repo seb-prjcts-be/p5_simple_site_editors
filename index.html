@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5 simple site editors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500&display=swap">
+  <style>
+    :root {
+      --pink: rgb(255, 0, 125);
+      --border: #e0e0e0;
+      --light: #777;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #000;
+      background: #fff;
+      line-height: 1.55;
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+    header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 2rem;
+      letter-spacing: 0.5px;
+      margin: 0 0 0.4rem;
+    }
+    h1 .dot { color: var(--pink); }
+    .lead { color: #444; margin: 0; max-width: 60ch; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      padding: 1.1rem 1.2rem 1.2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s;
+    }
+    a.card:hover { border-color: var(--pink); }
+
+    .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+    .card h2 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    .badge {
+      flex: none;
+      font-size: 0.65rem;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 0.15em 0.5em;
+      border: 1px solid var(--border);
+      color: var(--light);
+      white-space: nowrap;
+    }
+    .badge.client { color: var(--pink); border-color: var(--pink); }
+    .badge.php { color: #000; border-color: #000; }
+
+    .card p { margin: 0.6rem 0 0; color: #444; font-size: 0.92rem; }
+    .card .path { margin-top: 0.8rem; font-family: "Courier New", monospace; font-size: 0.8rem; color: var(--light); }
+    .card .note { margin-top: 0.6rem; font-size: 0.8rem; color: var(--light); }
+
+    footer { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); color: var(--light); font-size: 0.85rem; }
+    footer a { color: var(--pink); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>p5 simple site editors<span class="dot">.</span></h1>
+      <p class="lead">Kleine, herbruikbare p5.js-editors — elk een op zichzelf staand
+         building block. Van het simpelste live-editortje tot een PHP-editor die
+         echte bestanden bewerkt.</p>
+    </header>
+
+    <div class="grid">
+
+      <a class="card" href="p5-sketch-editor/">
+        <div class="card-top">
+          <h2>Basis</h2>
+          <span class="badge client">client-side</span>
+        </div>
+        <p>De simpelste vorm: één code-veld met een live preview, Run en Reset.</p>
+        <div class="path">p5-sketch-editor/</div>
+      </a>
+
+      <a class="card" href="p5-sketch-editor_partial/">
+        <div class="card-top">
+          <h2>Partial</h2>
+          <span class="badge client">client-side</span>
+        </div>
+        <p>Toont enkel een gemarkeerd blok (<code>//show … //end</code>); de rest
+           van de sketch draait verborgen. Voor gerichte oefeningen.</p>
+        <div class="path">p5-sketch-editor_partial/</div>
+      </a>
+
+      <a class="card" href="p5_sketch_editor_ext/">
+        <div class="card-top">
+          <h2>Multi-file</h2>
+          <span class="badge client">client-side</span>
+        </div>
+        <p>Drie bewerkbare bestanden (HTML / CSS / JS) via tabs; de preview
+           combineert ze.</p>
+        <div class="path">p5_sketch_editor_ext/</div>
+      </a>
+
+      <a class="card" href="https://github.com/seb-prjcts-be/p5_simple_site_editors/tree/main/p5_sketch_editor_php">
+        <div class="card-top">
+          <h2>All-feature</h2>
+          <span class="badge php">PHP</span>
+        </div>
+        <p>Bewerkt echte bestanden op schijf: multi-file tabs, opslaan, live
+           preview en Sketch/Bestand-menu's (nieuw, dupliceren, hernoemen, verwijderen).</p>
+        <p class="note">⚠ Werkt niet op GitHub Pages — vereist een lokale PHP-server
+           (XAMPP/Apache). Deze kaart linkt naar de broncode.</p>
+        <div class="path">p5_sketch_editor_php/</div>
+      </a>
+
+    </div>
+
+    <footer>
+      Broncode op <a href="https://github.com/seb-prjcts-be/p5_simple_site_editors">GitHub</a>.
+      Elke editor heeft een eigen README met details.
+    </footer>
+  </div>
+</body>
+</html>
