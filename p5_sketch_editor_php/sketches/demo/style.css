@@ -1,0 +1,16 @@
+/* CSS: opmaak van de sketch-pagina. */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #fff;
+}
+
+#sketch {
+  display: block;
+}
+
+.hint {
+  margin: 8px;
+  font-size: 13px;
+  color: #888;
+}

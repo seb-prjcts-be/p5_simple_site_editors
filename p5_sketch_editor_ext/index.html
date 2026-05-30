@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5 Sketch Editor — extended (HTML / CSS / JS)</title>
+  <link rel="stylesheet" href="p5-editor.css">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    p  { color: #444; }
+    code { background: #f2f2f2; padding: 0.1em 0.4em; }
+  </style>
+</head>
+<body>
+
+  <h1>p5 Sketch Editor — extended</h1>
+  <p>Nu met <strong>drie bewerkbare bestanden</strong>: wissel via de tabs tussen
+     <code>HTML</code>, <code>CSS</code> en <code>JS</code>, pas aan en klik <strong>Run</strong>.
+     De preview combineert de drie tot één pagina.</p>
+
+  <!-- De editor leest drie echte bestanden uit de map demo/. -->
+  <div class="p5-editor"
+       data-html="demo/index.html"
+       data-css="demo/style.css"
+       data-js="demo/script.js"></div>
+
+  <p>De startinhoud komt uit echte bestanden die naast elkaar staan:
+     <code>demo/index.html</code>, <code>demo/style.css</code>,
+     <code>demo/script.js</code>. p5.js wordt in het HTML-bestand ingeladen.</p>
+
+  <script src="p5-editor.js"></script>
+</body>
+</html>

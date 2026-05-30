@@ -1,0 +1,129 @@
+/* p5 Sketch Editor — zelfstandige styling.
+   Eén accentkleur (roze) via een variabele; pas --p5e-accent aan om te themen. */
+
+.p5-editor {
+  --p5e-accent: rgb(255, 0, 125);
+  --p5e-border: #e0e0e0;
+  border: 1px solid var(--p5e-border);
+  background: #fff;
+  font-family: system-ui, sans-serif;
+  margin: 1.5rem 0;
+}
+
+.p5e-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--p5e-border);
+}
+
+.p5e-tabs {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.p5e-tab {
+  padding: 0.3rem 0.7rem;
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #888;
+  cursor: pointer;
+}
+
+.p5e-tab:hover {
+  color: #000;
+}
+
+.p5e-tab.is-active {
+  color: var(--p5e-accent);
+  border-bottom-color: var(--p5e-accent);
+}
+
+.p5e-actions {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.p5e-btn {
+  padding: 0.35rem 0.85rem;
+  font: inherit;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  background: #fff;
+  color: #000;
+  border: 1px solid var(--p5e-border);
+  cursor: pointer;
+}
+
+.p5e-btn:hover {
+  border-color: #000;
+}
+
+.p5e-run {
+  background: var(--p5e-accent);
+  color: #fff;
+  border-color: var(--p5e-accent);
+}
+
+.p5e-run:hover {
+  background: #fff;
+  color: var(--p5e-accent);
+}
+
+.p5e-split {
+  display: flex;
+  min-height: 400px;
+}
+
+/* Code-paneel: drie gestapelde velden, alleen het actieve is zichtbaar. */
+.p5e-code-panel {
+  flex: 1;
+  display: flex;
+  border-right: 1px solid var(--p5e-border);
+}
+
+.p5e-code {
+  display: none;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  border: none;
+  resize: none;
+  outline: none;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  tab-size: 2;
+  caret-color: var(--p5e-accent);
+}
+
+.p5e-code.is-active {
+  display: block;
+}
+
+.p5e-preview {
+  flex: 1;
+  border: none;
+  background: #f5f5f5;
+}
+
+/* Stapel op smalle schermen. */
+@media (max-width: 700px) {
+  .p5e-split {
+    flex-direction: column;
+  }
+  .p5e-code-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--p5e-border);
+    min-height: 240px;
+  }
+  .p5e-preview {
+    min-height: 240px;
+  }
+}

@@ -1,0 +1,178 @@
+/**
+ * p5 Sketch Editor — partial.
+ *
+ * Toont en laat enkel gemarkeerde BLOKKEN van een sketch bewerken, terwijl de
+ * volledige code erachter zit en mee uitgevoerd wordt. Handig voor oefeningen
+ * ("pas de grootte van de cirkel aan") zonder de hele code te tonen.
+ *
+ * Gebruik: zet de volledige code in een <script type="text/p5"> en omsluit het
+ * bewerkbare stuk met herkenbare commentaren:
+ *
+ *   //show Pas de grootte van de cirkel aan
+ *   circle(mouseX, mouseY, 60);
+ *   //end
+ *
+ *   - tekst na //show is een optioneel label boven het veld.
+ *   - alles tussen //show en //end wordt een bewerkbaar code-veld.
+ *
+ * De rest van de code blijft verborgen. Bij elke wijziging draait de volledige
+ * sketch opnieuw (live).
+ */
+(function () {
+  'use strict';
+
+  var P5_CDN = 'https://cdn.jsdelivr.net/npm/p5@2.2.3/lib/p5.min.js';
+  var SHOW = /^\s*\/\/\s*show\b\s*(.*)$/i;
+  var END = /^\s*\/\/\s*end\b/i;
+
+  // Strip de gemeenschappelijke inspringing zodat het blok netjes oogt.
+  function dedent(lines) {
+    var min = Infinity;
+    lines.forEach(function (l) {
+      if (l.trim() === '') return;
+      var lead = l.match(/^[ \t]*/)[0].length;
+      if (lead < min) min = lead;
+    });
+    if (!isFinite(min) || min === 0) return lines.join('\n');
+    return lines.map(function (l) { return l.slice(min); }).join('\n');
+  }
+
+  function createEditor(container) {
+    var script = container.querySelector('script[type="text/p5"]');
+    var template = script
+      ? script.textContent.replace(/^\s*\n/, '').replace(/\s+$/, '')
+      : '';
+
+    // Splits in vaste regels en bewerkbare blokken (//show … //end).
+    var parts = [];   // {fixedLines:[...]}  of  {field:index}
+    var fields = [];  // {label, def, textarea}
+    var buf = [], region = null, label = '';
+
+    template.split('\n').forEach(function (line) {
+      var ms = line.match(SHOW);
+      if (ms && region === null) {
+        parts.push({ fixedLines: buf });
+        buf = [];
+        label = ms[1].trim();
+        region = [];
+        return;
+      }
+      if (END.test(line) && region !== null) {
+        parts.push({ field: fields.length });
+        fields.push({ label: label, def: dedent(region), textarea: null });
+        region = null;
+        return;
+      }
+      (region !== null ? region : buf).push(line);
+    });
+    if (region !== null) {
+      parts.push({ field: fields.length });
+      fields.push({ label: label, def: dedent(region), textarea: null });
+    } else {
+      parts.push({ fixedLines: buf });
+    }
+
+    container.innerHTML =
+      '<div class="p5p">' +
+      '  <div class="p5p-bar">' +
+      '    <span class="p5p-title">p5.js</span>' +
+      '    <button class="p5p-reset" type="button">Reset</button>' +
+      '  </div>' +
+      '  <div class="p5p-split">' +
+      '    <div class="p5p-controls"></div>' +
+      '    <iframe class="p5p-preview" title="preview"></iframe>' +
+      '  </div>' +
+      '</div>';
+
+    var controls = container.querySelector('.p5p-controls');
+    var preview = container.querySelector('.p5p-preview');
+
+    if (!fields.length) {
+      controls.innerHTML = '<p class="p5p-note">Geen bewerkbaar blok gemarkeerd (//show … //end).</p>';
+    }
+
+    var timer = null;
+    function scheduleRun() {
+      clearTimeout(timer);
+      timer = setTimeout(run, 250);
+    }
+
+    // Bouw per blok een code-veld op.
+    fields.forEach(function (f) {
+      var wrap = document.createElement('div');
+      wrap.className = 'p5p-field';
+      if (f.label) {
+        var lab = document.createElement('span');
+        lab.className = 'p5p-label';
+        lab.textContent = f.label;
+        wrap.appendChild(lab);
+      }
+      var ta = document.createElement('textarea');
+      ta.className = 'p5p-code';
+      ta.spellcheck = false;
+      ta.value = f.def;
+      ta.rows = Math.max(1, f.def.split('\n').length);
+      f.textarea = ta;
+      wrap.appendChild(ta);
+      controls.appendChild(wrap);
+
+      ta.addEventListener('input', scheduleRun);
+      // Tab voegt twee spaties in i.p.v. focus te verplaatsen.
+      ta.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        e.preventDefault();
+        var s = this.selectionStart, end = this.selectionEnd;
+        this.value = this.value.slice(0, s) + '  ' + this.value.slice(end);
+        this.selectionStart = this.selectionEnd = s + 2;
+      });
+    });
+
+    // Stel de volledige code samen (blokken terug op hun plaats) en draai die.
+    function run() {
+      var out = [];
+      parts.forEach(function (p) {
+        if (p.fixedLines) {
+          out.push.apply(out, p.fixedLines);
+        } else {
+          out.push.apply(out, fields[p.field].textarea.value.split('\n'));
+        }
+      });
+      var code = out.join('\n');
+      preview.srcdoc =
+        '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+        '<script src="' + P5_CDN + '"><\/script>' +
+        '<style>body{margin:0;overflow:hidden}</style></head><body><script>' +
+        'try{\n' + code + '\n}catch(e){' +
+        'document.body.innerHTML=' +
+        '"<pre style=\\"color:#c00;font:13px monospace;padding:12px;white-space:pre-wrap\\">"' +
+        '+e+"<\\/pre>";console.error(e);}' +
+        '<\/script></body></html>';
+    }
+
+    container.querySelector('.p5p-reset').addEventListener('click', function () {
+      fields.forEach(function (f) {
+        f.textarea.value = f.def;
+        f.textarea.rows = Math.max(1, f.def.split('\n').length);
+      });
+      run();
+    });
+
+    run(); // toon meteen het resultaat
+  }
+
+  function init() {
+    var list = document.querySelectorAll('.p5-editor:not([data-ready])');
+    for (var i = 0; i < list.length; i++) {
+      list[i].setAttribute('data-ready', '');
+      createEditor(list[i]);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  window.P5Partial = { init: init };
+})();

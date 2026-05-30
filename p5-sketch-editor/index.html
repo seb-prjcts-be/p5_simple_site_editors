@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5 Sketch Editor — building block</title>
+  <link rel="stylesheet" href="p5-editor.css">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    p  { color: #444; }
+    code { background: #f2f2f2; padding: 0.1em 0.4em; }
+  </style>
+</head>
+<body>
+
+  <h1>p5 Sketch Editor</h1>
+  <p>Een live p5.js-editor: pas de code links aan en klik <strong>Run</strong>.
+     Plaats een <code>.p5-editor</code> met een <code>&lt;script type="text/p5"&gt;</code> erin.</p>
+
+  <!-- Zo gebruik je de building block: -->
+  <div class="p5-editor">
+    <script type="text/p5">
+function setup() {
+  createCanvas(400, 400);
+  noStroke();
+}
+
+function draw() {
+  background(20);
+  fill(255, 0, 125);
+  circle(mouseX, mouseY, 60);
+}
+    </script>
+  </div>
+
+  <p>Tweede voorbeeld — code kan ook via <code>data-code</code>, maar de
+     script-tag is het leesbaarst.</p>
+
+  <div class="p5-editor">
+    <script type="text/p5">
+let t = 0;
+
+function setup() {
+  createCanvas(400, 400);
+}
+
+function draw() {
+  background(255);
+  stroke(0);
+  noFill();
+  translate(width / 2, height / 2);
+  for (let i = 0; i < 60; i++) {
+    rotate(0.1);
+    ellipse(0, 0, 200 + sin(t + i * 0.2) * 80, 80);
+  }
+  t += 0.02;
+}
+    </script>
+  </div>
+
+  <script src="p5-editor.js"></script>
+</body>
+</html>
