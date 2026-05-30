@@ -16,6 +16,18 @@
 
   var saved = coder.value; // inhoud zoals laatst opgeslagen/geladen
 
+  // Vertalingen die PHP heeft meegegeven (window.T); valt terug op een NL-tekst.
+  var T = window.T || {};
+  function tr(key, fallback, vars) {
+    var s = T[key] || fallback;
+    if (vars) {
+      Object.keys(vars).forEach(function (k) {
+        s = s.replace('{' + k + '}', vars[k]);
+      });
+    }
+    return s;
+  }
+
   // Herlaad het preview-iframe (forceer een nieuwe load).
   window.reloadPreview = function () {
     var f = document.getElementById('prev');
@@ -44,14 +56,14 @@
   // --- Sketch-niveau (folders) ------------------------------------------
   // Nieuwe (lege) sketch met starter-bestanden.
   window.newSketch = function () {
-    var name = prompt('Nieuwe sketch — naam:');
+    var name = prompt(tr('prompt_sketch_new', 'Nieuwe sketch — naam:'));
     if (!name) return;
     fileAction('newsketch', name, true);
   };
 
   // Dupliceer de huidige sketch onder een nieuwe naam.
   window.dupSketch = function () {
-    var name = prompt('Dupliceren — naam voor de kopie:');
+    var name = prompt(tr('prompt_sketch_dup', 'Dupliceren — naam voor de kopie:'));
     if (!name) return;
     fileAction('saveas', name, true);
   };
@@ -59,7 +71,7 @@
   // Hernoem de huidige sketch-folder.
   window.renameSketch = function () {
     var current = (document.querySelector('input[name=dir]') || {}).value || '';
-    var name = prompt('Sketch hernoemen naar:', current);
+    var name = prompt(tr('prompt_sketch_rename', 'Sketch hernoemen naar:'), current);
     if (!name || name === current) return;
     fileAction('renamesketch', name, true);
   };
@@ -67,13 +79,13 @@
   // Verwijder de huidige sketch-folder.
   window.deleteSketch = function () {
     var current = (document.querySelector('input[name=dir]') || {}).value || '';
-    if (!confirm('Sketch "' + current + '" volledig verwijderen? Alle bestanden erin gaan verloren.')) return;
+    if (!confirm(tr('confirm_sketch_delete', 'Sketch "{name}" volledig verwijderen? Alle bestanden erin gaan verloren.', { name: current }))) return;
     fileAction('deletesketch', undefined, true);
   };
 
   // Nieuw (leeg) bestand in de huidige sketch.
   window.newFile = function () {
-    var name = prompt('Nieuw bestand — naam incl. extensie (bv. data.js):');
+    var name = prompt(tr('prompt_file_new', 'Nieuw bestand — naam incl. extensie (bv. data.js):'));
     if (!name) return;
     fileAction('newfile', name, true);
   };
@@ -81,7 +93,7 @@
   // Hernoem het actieve bestand.
   window.renameFile = function () {
     var current = (document.querySelector('input[name=file]') || {}).value || '';
-    var name = prompt('Hernoem bestand naar:', current);
+    var name = prompt(tr('prompt_file_rename', 'Hernoem bestand naar:'), current);
     if (!name || name === current) return;
     fileAction('rename', name, false); // waarschuw bij onopgeslagen werk
   };
@@ -89,7 +101,7 @@
   // Verwijder het actieve bestand.
   window.deleteFile = function () {
     var current = (document.querySelector('input[name=file]') || {}).value || '';
-    if (!confirm('Bestand "' + current + '" verwijderen? Dit kan niet ongedaan gemaakt worden.')) return;
+    if (!confirm(tr('confirm_file_delete', 'Bestand "{name}" verwijderen? Dit kan niet ongedaan gemaakt worden.', { name: current }))) return;
     fileAction('delete', undefined, true);
   };
 

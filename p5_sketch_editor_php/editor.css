@@ -48,6 +48,28 @@ body {
   font-size: 11px;
 }
 
+/* Taalknop (NL | EN), rechts in de balk. */
+.ed-lang {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 0.4rem;
+  font-size: 11px;
+}
+
+.ed-lang a {
+  color: var(--p5e-light);
+  text-decoration: none;
+}
+
+.ed-lang a:hover {
+  color: #000;
+}
+
+.ed-lang a.is-current {
+  color: var(--p5e-accent);
+  font-weight: 600;
+}
+
 /* Bestand-menu (hover-dropdown) */
 .ed-menu {
   position: relative;

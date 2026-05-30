@@ -61,6 +61,19 @@ if ($BASE === false) {
     fail(500, 'Map sketches/ niet gevonden.');
 }
 
+// --- Taal (i18n): nl/en, gekozen via ?lang= en onthouden in een cookie -----
+$LANGS = ['nl', 'en'];
+$lang = $_GET['lang'] ?? ($_COOKIE['ed_lang'] ?? 'nl');
+if (!in_array($lang, $LANGS, true)) {
+    $lang = 'nl';
+}
+if (isset($_GET['lang']) && in_array($_GET['lang'], $LANGS, true)) {
+    setcookie('ed_lang', $lang, ['expires' => time() + 31536000, 'path' => '/', 'samesite' => 'Lax']);
+}
+$T = json_decode((string) @file_get_contents(__DIR__ . "/lang/$lang.json"), true) ?: [];
+/** Vertaal een sleutel (valt terug op de sleutel zelf). */
+$t = fn(string $k): string => (string) ($T[$k] ?? $k);
+
 /** Resolve een sketch-map (relatief t.o.v. $BASE) met containment. */
 function resolve_dir(string $base, string $dirRel): string
 {
@@ -309,21 +322,21 @@ if ($dirRel === '' || !in_array($dirRel, $sketches, true)) {
 if ($dirRel === '') {
     $h = fn($s) => htmlspecialchars((string) $s, ENT_QUOTES);
     ?><!doctype html>
-<html lang="nl">
+<html lang="<?= $h($lang) ?>">
 <head>
 <meta charset="utf-8">
-<title>p5 editor — geen sketches</title>
+<title>p5 editor</title>
 <link rel="stylesheet" href="editor.css">
 </head>
 <body>
 <div class="ed-top"><span class="ed-brand">p5 editor</span></div>
 <div class="ed-empty">
-  <p>Er zijn nog geen sketches.</p>
+  <p><?= $h($t('empty_msg')) ?></p>
   <form method="POST" action="index.php">
     <input type="hidden" name="csrf" value="<?= $h(csrf_token()) ?>">
     <input type="hidden" name="action" value="newsketch">
-    <input type="text" name="newname" placeholder="naam-van-sketch" autofocus>
-    <button type="submit">Nieuwe sketch maken</button>
+    <input type="text" name="newname" placeholder="<?= $h($t('empty_placeholder')) ?>" autofocus>
+    <button type="submit"><?= $h($t('empty_btn')) ?></button>
   </form>
 </div>
 </body>
@@ -384,8 +397,10 @@ if (is_file($dirAbs . '/index.html')) {
 }
 
 $h = fn($s) => htmlspecialchars((string) $s, ENT_QUOTES);
+// Taal-links behouden de huidige sketch + bestand.
+$langUrl = fn($l) => 'index.php?dir=' . rawurlencode($dirRel) . '&file=' . rawurlencode($activeFile) . '&lang=' . $l;
 ?><!doctype html>
-<html lang="nl">
+<html lang="<?= $h($lang) ?>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -397,30 +412,34 @@ $h = fn($s) => htmlspecialchars((string) $s, ENT_QUOTES);
 <div class="ed-top">
   <span class="ed-brand">p5 editor</span>
   <div class="ed-menu">
-    <button class="ed-menu-btn" type="button">Sketch &#9662;</button>
+    <button class="ed-menu-btn" type="button"><?= $h($t('menu_sketch')) ?> &#9662;</button>
     <div class="ed-menu-list">
       <?php foreach ($sketches as $s): ?>
         <a class="ed-menu-link<?= $s === $dirRel ? ' is-current' : '' ?>"
            href="index.php?dir=<?= rawurlencode($s) ?>"><?= $h($s) ?></a>
       <?php endforeach; ?>
       <hr>
-      <button type="button" onclick="newSketch()">Nieuwe sketch…</button>
-      <button type="button" onclick="dupSketch()">Dupliceren…</button>
-      <button type="button" onclick="renameSketch()">Naam wijzigen…</button>
-      <button type="button" onclick="deleteSketch()">Verwijderen</button>
+      <button type="button" onclick="newSketch()"><?= $h($t('sketch_new')) ?></button>
+      <button type="button" onclick="dupSketch()"><?= $h($t('sketch_dup')) ?></button>
+      <button type="button" onclick="renameSketch()"><?= $h($t('sketch_rename')) ?></button>
+      <button type="button" onclick="deleteSketch()"><?= $h($t('sketch_delete')) ?></button>
     </div>
   </div>
   <div class="ed-menu">
-    <button class="ed-menu-btn" type="button">Bestand &#9662;</button>
+    <button class="ed-menu-btn" type="button"><?= $h($t('menu_file')) ?> &#9662;</button>
     <div class="ed-menu-list">
-      <button type="button" onclick="newFile()">Nieuw bestand…</button>
-      <button type="button" onclick="saveNow()">Opslaan <span class="ed-menu-sc">Ctrl+S</span></button>
+      <button type="button" onclick="newFile()"><?= $h($t('file_new')) ?></button>
+      <button type="button" onclick="saveNow()"><?= $h($t('file_save')) ?> <span class="ed-menu-sc">Ctrl+S</span></button>
       <hr>
-      <button type="button" onclick="renameFile()">Naam wijzigen…</button>
-      <button type="button" onclick="deleteFile()">Verwijderen</button>
+      <button type="button" onclick="renameFile()"><?= $h($t('file_rename')) ?></button>
+      <button type="button" onclick="deleteFile()"><?= $h($t('file_delete')) ?></button>
     </div>
   </div>
   <span class="ed-dir"><?= $h($dirRel) ?></span>
+  <span class="ed-lang">
+    <a href="<?= $h($langUrl('nl')) ?>"<?= $lang === 'nl' ? ' class="is-current"' : '' ?>>NL</a>
+    <a href="<?= $h($langUrl('en')) ?>"<?= $lang === 'en' ? ' class="is-current"' : '' ?>>EN</a>
+  </span>
 </div>
 
 <div class="ed-main">
@@ -445,25 +464,26 @@ $h = fn($s) => htmlspecialchars((string) $s, ENT_QUOTES);
 
   <div class="ed-right">
     <div class="ed-prev-bar">
-      <button type="button" onclick="reloadPreview()">&#8635; herlaad preview</button>
+      <button type="button" onclick="reloadPreview()">&#8635; <?= $h($t('reload_preview')) ?></button>
       <span class="ed-libs">
         <?php if ($libraries): ?>
-          <?= count($libraries) ?> lib(s): <?= $h(implode(', ', array_map(fn($l) => basename(parse_url($l, PHP_URL_PATH) ?: $l), $libraries))) ?>
+          <?= count($libraries) ?> <?= $h($t('libs')) ?>: <?= $h(implode(', ', array_map(fn($l) => basename(parse_url($l, PHP_URL_PATH) ?: $l), $libraries))) ?>
         <?php elseif ($assets): ?>
-          <?= count($assets) ?> asset(s)
+          <?= count($assets) ?> <?= $h($t('assets')) ?>
         <?php else: ?>
-          geen libs/assets
+          <?= $h($t('no_libs')) ?>
         <?php endif; ?>
       </span>
     </div>
     <?php if ($previewUrl !== ''): ?>
       <iframe id="prev" src="<?= $h($previewUrl) ?>" title="live preview"></iframe>
     <?php else: ?>
-      <div class="ed-noprev">Geen preview (sketch mist index.html).</div>
+      <div class="ed-noprev"><?= $h($t('no_preview')) ?></div>
     <?php endif; ?>
   </div>
 </div>
 
+<script>window.T = <?= json_encode($T, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;</script>
 <script src="editor.js"></script>
 </body>
 </html>
