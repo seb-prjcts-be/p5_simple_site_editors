@@ -31,3 +31,39 @@ http://localhost/.../p5_sketch_editor_php/index.php
 ```
 
 Elke map heeft een eigen `README.md` met details.
+
+## Vertalen
+
+Alle zichtbare teksten staan als gewone strings in de broncode — geen
+vertaalframework nodig. Pas ze gewoon aan:
+
+| Wat | Waar |
+|---|---|
+| Knop-labels (`Run`, `Reset`) | bovenaan in elk `p5-editor.js`, in de `innerHTML`-string |
+| Tab-labels (`HTML`/`CSS`/`JS`) | `p5_sketch_editor_ext/p5-editor.js` |
+| Menu-labels (`Sketch`, `Bestand`, `Opslaan`, `Nieuw bestand…`, …) | `p5_sketch_editor_php/index.php`, in de `<div class="ed-menu">`-blokken |
+| Pop-up teksten (`prompt` / `confirm`) | de `window.*`-functies in `editor.js` / `p5-editor.js` |
+| Foutmeldingen | de `fail(...)`-aanroepen in `p5_sketch_editor_php/index.php` |
+| Uitleg / introtekst | de `index.html` van elke editor + deze landingspagina |
+| Oefening-labels (partial) | de tekst na `//show` in je eigen sketch |
+
+Voor de partial-editor hoef je niets in de code te wijzigen: het label komt uit
+het `//show <label>`-commentaar van de sketch zelf.
+
+## Translation (English)
+
+All visible text lives as plain strings in the source — no i18n framework
+needed. Just edit them in place:
+
+| What | Where |
+|---|---|
+| Button labels (`Run`, `Reset`) | top of each `p5-editor.js`, inside the `innerHTML` string |
+| Tab labels (`HTML`/`CSS`/`JS`) | `p5_sketch_editor_ext/p5-editor.js` |
+| Menu labels (`Sketch`, `Bestand`, `Opslaan`, …) | `p5_sketch_editor_php/index.php`, in the `<div class="ed-menu">` blocks |
+| Pop-up text (`prompt` / `confirm`) | the `window.*` functions in `editor.js` / `p5-editor.js` |
+| Error messages | the `fail(...)` calls in `p5_sketch_editor_php/index.php` |
+| Intro / help text | each editor's `index.html` + this landing page |
+| Exercise labels (partial) | the text after `//show` in your own sketch |
+
+For the partial editor you don't touch the code at all: the label comes from the
+`//show <label>` comment in the sketch itself.
