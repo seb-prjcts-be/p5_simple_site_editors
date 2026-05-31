@@ -104,6 +104,67 @@
   background: #f5f5f5;
 }
 
+/* --- CodeMirror: zo dicht mogelijk tegen de originele textarea-look ------- */
+.p5-editor .CodeMirror {
+  flex: 1;
+  height: auto;                       /* groeit mee; min-hoogte via scroll */
+  border-right: 1px solid var(--p5e-border);
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.p5-editor .CodeMirror-scroll {
+  min-height: 400px;
+}
+
+/* Roze caret + roze selectie, net als de originele editor. */
+.p5-editor .CodeMirror-cursor {
+  border-left: 1px solid var(--p5e-accent);
+}
+
+.p5-editor .CodeMirror-selected {
+  background: rgba(255, 0, 125, 0.15);
+}
+
+.p5-editor .CodeMirror-focused .CodeMirror-selected {
+  background: rgba(255, 0, 125, 0.22);
+}
+
+/* Eigen, on-brand thema (zwart/wit + roze) i.p.v. de bonte default-kleuren. */
+.cm-s-p5e.CodeMirror,
+.cm-s-p5e .CodeMirror-scroll {
+  background: #fff;
+  color: #000;
+}
+
+.cm-s-p5e .CodeMirror-gutters {
+  background: #fafafa;
+  border-right: 1px solid var(--p5e-border);
+}
+
+.cm-s-p5e .CodeMirror-linenumber {
+  color: #bbb;
+}
+
+.cm-s-p5e .CodeMirror-matchingbracket {
+  color: var(--p5e-accent);
+  font-weight: 600;
+}
+
+.cm-s-p5e .cm-comment { color: #9aa0a6; font-style: italic; }
+.cm-s-p5e .cm-keyword,
+.cm-s-p5e .cm-builtin   { color: var(--p5e-accent); }
+.cm-s-p5e .cm-string,
+.cm-s-p5e .cm-string-2  { color: #0a7d4f; }
+.cm-s-p5e .cm-number,
+.cm-s-p5e .cm-atom      { color: #0a7d4f; }
+.cm-s-p5e .cm-def,
+.cm-s-p5e .cm-variable,
+.cm-s-p5e .cm-variable-2,
+.cm-s-p5e .cm-property,
+.cm-s-p5e .cm-operator  { color: #000; }
+
 /* Stapel op smalle schermen. */
 @media (max-width: 700px) {
   .p5e-split {
@@ -112,5 +173,12 @@
   .p5e-code {
     border-right: none;
     border-bottom: 1px solid var(--p5e-border);
+  }
+  .p5-editor .CodeMirror {
+    border-right: none;
+    border-bottom: 1px solid var(--p5e-border);
+  }
+  .p5-editor .CodeMirror-scroll {
+    min-height: 260px;
   }
 }

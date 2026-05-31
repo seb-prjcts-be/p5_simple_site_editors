@@ -15,8 +15,10 @@ declare(strict_types=1);
  *   - doelmap moet binnen sketches/ liggen (realpath-containment)
  *   - bestandsnaam: geen ../  /  \ ; extensie-whitelist
  *
- * Syntax highlighting en git-autocommit zijn bewust NIET hier — dat zijn
- * latere lagen bovenop dit fundament.
+ * Syntax highlighting ligt als latere laag bovenop dit fundament: CodeMirror 5
+ * (via CDN) over het codeveld; fromTextArea synct bij opslaan terug naar de
+ * textarea, dus de POST hieronder blijft ongewijzigd. Git-autocommit blijft
+ * bewust NIET hier.
  */
 
 const ALLOWED_EXT = ['js', 'html', 'css', 'json', 'csv', 'txt', 'md', 'glsl', 'vert', 'frag'];
@@ -405,6 +407,7 @@ $langUrl = fn($l) => 'index.php?dir=' . rawurlencode($dirRel) . '&file=' . rawur
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $h($activeFile) ?> — p5 editor (php)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css">
 <link rel="stylesheet" href="editor.css">
 </head>
 <body>
@@ -484,6 +487,24 @@ $langUrl = fn($l) => 'index.php?dir=' . rawurlencode($dirRel) . '&file=' . rawur
 </div>
 
 <script>window.T = <?= json_encode($T, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;</script>
+<?php
+// Kies een CodeMirror-mode op basis van de extensie van het actieve bestand.
+$cmModes = [
+    'js' => 'javascript', 'json' => 'application/json',
+    'css' => 'css', 'html' => 'htmlmixed', 'htm' => 'htmlmixed',
+];
+$activeExt = strtolower(pathinfo($activeFile, PATHINFO_EXTENSION));
+$cmMode = $cmModes[$activeExt] ?? null; // overige types: platte tekst
+?>
+<script>window.ED_MODE = <?= json_encode($cmMode) ?>;</script>
+<!-- CodeMirror 5 (syntax highlighting) — modes voor de bewerkbare bestandstypes. Laad vóór editor.js. -->
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/css/css.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/xml/xml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/htmlmixed/htmlmixed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/closebrackets.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/matchbrackets.js"></script>
 <script src="editor.js"></script>
 </body>
 </html>

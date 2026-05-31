@@ -14,7 +14,36 @@
   var coder = document.getElementById('coder');
   if (!coder) return;
 
-  var saved = coder.value; // inhoud zoals laatst opgeslagen/geladen
+  // CodeMirror-instellingen: dicht tegen de originele editor (licht, monospace,
+  // tab = 2 spaties, roze caret) + syntax highlighting.
+  function cmOptions(mode) {
+    return {
+      mode: mode || null,
+      theme: 'p5e',
+      lineNumbers: true,
+      lineWrapping: false,
+      indentUnit: 2,
+      tabSize: 2,
+      indentWithTabs: false,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      extraKeys: {
+        Tab: function (cm) {
+          if (cm.somethingSelected()) cm.indentSelection('add');
+          else cm.replaceSelection('  ', 'end');
+        },
+        'Shift-Tab': function (cm) { cm.indentSelection('subtract'); }
+      }
+    };
+  }
+
+  // Vervang de textarea door CodeMirror (als de lib geladen is). fromTextArea
+  // synct bij form-submit automatisch terug naar de textarea, dus de POST
+  // (name="coder") blijft ongewijzigd werken.
+  var cm = window.CodeMirror ? CodeMirror.fromTextArea(coder, cmOptions(window.ED_MODE)) : null;
+  function edVal() { return cm ? cm.getValue() : coder.value; }
+
+  var saved = edVal(); // inhoud zoals laatst opgeslagen/geladen
 
   // Vertalingen die PHP heeft meegegeven (window.T); valt terug op een NL-tekst.
   var T = window.T || {};
@@ -43,8 +72,9 @@
       document.getElementById('ed-newname').value = newname;
     }
     if (suppress) {
-      saved = coder.value;
+      saved = edVal();
     }
+    if (cm) cm.save(); // schrijf CodeMirror-inhoud terug naar de textarea
     form.submit();
   }
 
@@ -115,7 +145,8 @@
 
   // Bij klikken op Opslaan: ook als opgeslagen markeren.
   form.addEventListener('submit', function () {
-    saved = coder.value;
+    if (cm) cm.save();
+    saved = edVal();
   });
 
   // Sleepbare scheidingsbalk: pas de breedte van de preview-kolom aan.
@@ -138,24 +169,28 @@
         document.body.classList.remove('ed-resizing');
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
+        if (cm) cm.refresh(); // editor opnieuw meten na breedte-wijziging
       }
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
     });
   }
 
-  // Tab voegt twee spaties in i.p.v. focus te verplaatsen.
-  coder.addEventListener('keydown', function (e) {
-    if (e.key !== 'Tab') return;
-    e.preventDefault();
-    var s = this.selectionStart, end = this.selectionEnd;
-    this.value = this.value.slice(0, s) + '  ' + this.value.slice(end);
-    this.selectionStart = this.selectionEnd = s + 2;
-  });
+  // Zonder CodeMirror: Tab voegt twee spaties in i.p.v. focus te verplaatsen.
+  // (Met CodeMirror regelt de editor dit zelf.)
+  if (!cm) {
+    coder.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      e.preventDefault();
+      var s = this.selectionStart, end = this.selectionEnd;
+      this.value = this.value.slice(0, s) + '  ' + this.value.slice(end);
+      this.selectionStart = this.selectionEnd = s + 2;
+    });
+  }
 
   // Waarschuw als je wegnavigeert (bv. ander tabblad) met onopgeslagen werk.
   window.addEventListener('beforeunload', function (e) {
-    if (coder.value !== saved) {
+    if (edVal() !== saved) {
       e.preventDefault();
       e.returnValue = '';
     }

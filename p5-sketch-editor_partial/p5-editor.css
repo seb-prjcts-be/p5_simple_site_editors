@@ -129,6 +129,56 @@
   background: #f5f5f5;
 }
 
+/* --- CodeMirror: inline blokjes, look van de originele velden ------------- */
+.p5-editor .CodeMirror {
+  height: auto;                       /* groeit mee met de inhoud */
+  border: 1px solid var(--p5e-border);
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.p5-editor .CodeMirror-focused {
+  border-color: var(--p5e-accent);
+}
+
+.p5-editor .CodeMirror-cursor {
+  border-left: 1px solid var(--p5e-accent);
+}
+
+.p5-editor .CodeMirror-selected {
+  background: rgba(255, 0, 125, 0.15);
+}
+
+.p5-editor .CodeMirror-focused .CodeMirror-selected {
+  background: rgba(255, 0, 125, 0.22);
+}
+
+/* Eigen, on-brand thema (zwart/wit + roze). */
+.cm-s-p5e.CodeMirror,
+.cm-s-p5e .CodeMirror-scroll {
+  background: #fff;
+  color: #000;
+}
+
+.cm-s-p5e .CodeMirror-matchingbracket {
+  color: var(--p5e-accent);
+  font-weight: 600;
+}
+
+.cm-s-p5e .cm-comment { color: #9aa0a6; font-style: italic; }
+.cm-s-p5e .cm-keyword,
+.cm-s-p5e .cm-builtin   { color: var(--p5e-accent); }
+.cm-s-p5e .cm-string,
+.cm-s-p5e .cm-string-2  { color: #0a7d4f; }
+.cm-s-p5e .cm-number,
+.cm-s-p5e .cm-atom      { color: #0a7d4f; }
+.cm-s-p5e .cm-def,
+.cm-s-p5e .cm-variable,
+.cm-s-p5e .cm-variable-2,
+.cm-s-p5e .cm-property,
+.cm-s-p5e .cm-operator  { color: #000; }
+
 /* Stapel op smalle schermen. */
 @media (max-width: 700px) {
   .p5p-split {

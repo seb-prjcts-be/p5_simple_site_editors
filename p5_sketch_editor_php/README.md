@@ -72,9 +72,16 @@ om er meteen een nieuwe te maken.
   (`js, html, css, json, csv, txt, md, glsl, vert, frag`).
 - **Sketch-naam**: regex `[a-z0-9][a-z0-9_-]*`; weigert bestaande mappen.
 
+## Syntax highlighting
+
+- **CodeMirror 5** (via CDN) ligt over het codeveld, met een eigen, on-brand
+  thema (`cm-s-p5e`: wit/zwart + roze accent). De mode wordt server-side gekozen
+  op basis van de bestandsextensie (`js`, `css`, `html`, `json`). `fromTextArea`
+  synct bij opslaan automatisch terug naar de textarea, dus de POST blijft gelijk.
+  Valt netjes terug op een gewone textarea als de lib niet laadt.
+
 ## Bewust (nog) niet
 
-- **Syntax highlighting** — komt als latere laag (CodeMirror, zoals boekentoren).
 - **Git-autocommit** — optionele latere laag.
 
 ## Verschil met de client-side blokken

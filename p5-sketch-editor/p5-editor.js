@@ -30,6 +30,31 @@
   var SELF = (document.currentScript && document.currentScript.src) || '';
   var BASE = SELF.replace(/[^/]*$/, '');
 
+  // CodeMirror-instellingen: zo dicht mogelijk tegen de originele editor
+  // (licht, monospace, tab = 2 spaties, roze caret) + syntax highlighting.
+  // Valt netjes terug op een gewone textarea als CodeMirror niet geladen is.
+  function cmOptions(mode) {
+    return {
+      mode: mode,
+      theme: 'p5e',
+      lineNumbers: true,
+      lineWrapping: false,
+      indentUnit: 2,
+      tabSize: 2,
+      indentWithTabs: false,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      viewportMargin: Infinity,
+      extraKeys: {
+        Tab: function (cm) {
+          if (cm.somethingSelected()) cm.indentSelection('add');
+          else cm.replaceSelection('  ', 'end'); // 2 spaties, net als het origineel
+        },
+        'Shift-Tab': function (cm) { cm.indentSelection('subtract'); }
+      }
+    };
+  }
+
   function currentLang() {
     var l = localStorage.getItem('p5e-lang') || document.documentElement.lang || 'nl';
     return l === 'en' ? 'en' : 'nl';
@@ -71,9 +96,14 @@
     var original = code;
     textarea.value = code;
 
+    // Vervang de textarea door een CodeMirror-editor (als de lib geladen is).
+    var cm = window.CodeMirror ? CodeMirror.fromTextArea(textarea, cmOptions('javascript')) : null;
+    function getCode() { return cm ? cm.getValue() : textarea.value; }
+    function setCode(v) { if (cm) cm.setValue(v); else textarea.value = v; }
+
     // Bouw een complete HTML-pagina met p5 + de code, en toon die in het iframe.
     function run() {
-      var sketch = textarea.value;
+      var sketch = getCode();
       preview.srcdoc =
         '<!DOCTYPE html><html><head><meta charset="utf-8">' +
         '<script src="' + P5_CDN + '"><\/script>' +
@@ -87,7 +117,7 @@
 
     container.querySelector('.p5e-run').addEventListener('click', run);
     container.querySelector('.p5e-reset').addEventListener('click', function () {
-      textarea.value = original;
+      setCode(original);
       run();
     });
 
@@ -100,15 +130,18 @@
       });
     });
 
-    // Tab in de textarea voegt twee spaties in i.p.v. focus te verplaatsen.
-    textarea.addEventListener('keydown', function (e) {
-      if (e.key !== 'Tab') return;
-      e.preventDefault();
-      var s = textarea.selectionStart;
-      var end = textarea.selectionEnd;
-      textarea.value = textarea.value.slice(0, s) + '  ' + textarea.value.slice(end);
-      textarea.selectionStart = textarea.selectionEnd = s + 2;
-    });
+    // Zonder CodeMirror: Tab in de textarea voegt twee spaties in
+    // i.p.v. focus te verplaatsen. (Met CodeMirror regelt de editor dit zelf.)
+    if (!cm) {
+      textarea.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        e.preventDefault();
+        var s = textarea.selectionStart;
+        var end = textarea.selectionEnd;
+        textarea.value = textarea.value.slice(0, s) + '  ' + textarea.value.slice(end);
+        textarea.selectionStart = textarea.selectionEnd = s + 2;
+      });
+    }
 
     run(); // Auto-run bij laden.
   }

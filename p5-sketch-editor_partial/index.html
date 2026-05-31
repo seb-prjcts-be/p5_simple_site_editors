@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>p5 Sketch Editor — partial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css">
   <link rel="stylesheet" href="p5-editor.css">
   <style>
     body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
@@ -41,6 +42,11 @@ function draw() {
   <p>De leerling ziet enkel de hele regel <code>circle(...)</code> — de rest van
      de sketch (<code>setup</code>, <code>draw</code>, de kleur…) blijft verborgen.</p>
 
+  <!-- CodeMirror 5 (syntax highlighting). Laad vóór p5-editor.js. -->
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/closebrackets.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/matchbrackets.js"></script>
   <script src="p5-editor.js"></script>
 </body>
 </html>

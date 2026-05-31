@@ -10,6 +10,11 @@ bestanden op schijf bewerkt.
 Gemeenschappelijke stijl: zwart-wit minimalisme met één roze accent
 (`rgb(255, 0, 125)`), p5.js uit de CDN, geen build-stap.
 
+Alle editors gebruiken **CodeMirror 5** (uit de CDN) voor syntax highlighting,
+met een eigen, on-brand thema (`cm-s-p5e`: wit/zwart + roze caret en keywords),
+tab = 2 spaties — zo dicht mogelijk tegen de originele p5-editor-look. Laadt de
+lib niet, dan valt elke editor terug op een gewone textarea.
+
 ## De editors
 
 | Map | Type | Beschrijving |

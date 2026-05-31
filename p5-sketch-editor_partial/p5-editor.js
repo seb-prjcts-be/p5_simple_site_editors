@@ -30,6 +30,31 @@
   var SELF = (document.currentScript && document.currentScript.src) || '';
   var BASE = SELF.replace(/[^/]*$/, '');
 
+  // CodeMirror-instellingen, dicht tegen de originele editor. De bewerkbare
+  // blokken zijn kleine fragmenten, dus géén line-numbers (zoals het origineel).
+  // Valt netjes terug op de gewone textarea als CodeMirror niet geladen is.
+  function cmOptions() {
+    return {
+      mode: 'javascript',
+      theme: 'p5e',
+      lineNumbers: false,
+      lineWrapping: false,
+      indentUnit: 2,
+      tabSize: 2,
+      indentWithTabs: false,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      viewportMargin: Infinity,
+      extraKeys: {
+        Tab: function (cm) {
+          if (cm.somethingSelected()) cm.indentSelection('add');
+          else cm.replaceSelection('  ', 'end');
+        },
+        'Shift-Tab': function (cm) { cm.indentSelection('subtract'); }
+      }
+    };
+  }
+
   function currentLang() {
     var l = localStorage.getItem('p5e-lang') || document.documentElement.lang || 'nl';
     return l === 'en' ? 'en' : 'nl';
@@ -148,15 +173,22 @@
       wrap.appendChild(ta);
       controls.appendChild(wrap);
 
-      ta.addEventListener('input', scheduleRun);
-      // Tab voegt twee spaties in i.p.v. focus te verplaatsen.
-      ta.addEventListener('keydown', function (e) {
-        if (e.key !== 'Tab') return;
-        e.preventDefault();
-        var s = this.selectionStart, end = this.selectionEnd;
-        this.value = this.value.slice(0, s) + '  ' + this.value.slice(end);
-        this.selectionStart = this.selectionEnd = s + 2;
-      });
+      // Vervang door een CodeMirror-veld (als de lib geladen is).
+      f.cm = window.CodeMirror ? CodeMirror.fromTextArea(ta, cmOptions()) : null;
+
+      if (f.cm) {
+        f.cm.on('change', scheduleRun);
+      } else {
+        ta.addEventListener('input', scheduleRun);
+        // Zonder CodeMirror: Tab voegt twee spaties in i.p.v. focus te verplaatsen.
+        ta.addEventListener('keydown', function (e) {
+          if (e.key !== 'Tab') return;
+          e.preventDefault();
+          var s = this.selectionStart, end = this.selectionEnd;
+          this.value = this.value.slice(0, s) + '  ' + this.value.slice(end);
+          this.selectionStart = this.selectionEnd = s + 2;
+        });
+      }
     });
 
     // Stel de volledige code samen (blokken terug op hun plaats) en draai die.
@@ -166,7 +198,9 @@
         if (p.fixedLines) {
           out.push.apply(out, p.fixedLines);
         } else {
-          out.push.apply(out, fields[p.field].textarea.value.split('\n'));
+          var f = fields[p.field];
+          var val = f.cm ? f.cm.getValue() : f.textarea.value;
+          out.push.apply(out, val.split('\n'));
         }
       });
       var code = out.join('\n');
@@ -183,8 +217,12 @@
 
     container.querySelector('.p5p-reset').addEventListener('click', function () {
       fields.forEach(function (f) {
-        f.textarea.value = f.def;
-        f.textarea.rows = Math.max(1, f.def.split('\n').length);
+        if (f.cm) {
+          f.cm.setValue(f.def);
+        } else {
+          f.textarea.value = f.def;
+          f.textarea.rows = Math.max(1, f.def.split('\n').length);
+        }
       });
       run();
     });
