@@ -49,8 +49,9 @@ hoofdpagina; een fout in de code toont een nette melding i.p.v. alles te breken.
 
 - **p5-versie**: één regel bovenaan `p5-editor.js` (`P5_CDN`).
 - **accentkleur**: de CSS-variabele `--p5e-accent` op `.p5-editor`.
-- **highlight-kleuren**: het thema `cm-s-p5e` onderaan `p5-editor.css`
-  (comments grijs, keywords roze, strings/getallen groen).
+- **highlight-kleuren**: het thema `cm-s-p5e` onderaan `p5-editor.css` — het
+  officiële `p5-light`-palet van editor.p5js.org (keywords bruin, functies/
+  variabelen blauw, strings groen, getallen zwart, comments grijs).
 
 ## Bestanden
 

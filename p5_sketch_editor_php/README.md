@@ -74,8 +74,8 @@ om er meteen een nieuwe te maken.
 
 ## Syntax highlighting
 
-- **CodeMirror 5** (via CDN) ligt over het codeveld, met een eigen, on-brand
-  thema (`cm-s-p5e`: wit/zwart + roze accent). De mode wordt server-side gekozen
+- **CodeMirror 5** (via CDN) ligt over het codeveld, met het officiële
+  `p5-light`-palet van editor.p5js.org (thema `cm-s-p5e`). De mode wordt server-side gekozen
   op basis van de bestandsextensie (`js`, `css`, `html`, `json`). `fromTextArea`
   synct bij opslaan automatisch terug naar de textarea, dus de POST blijft gelijk.
   Valt netjes terug op een gewone textarea als de lib niet laadt.

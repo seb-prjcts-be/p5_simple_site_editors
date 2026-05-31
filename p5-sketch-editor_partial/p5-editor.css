@@ -143,41 +143,39 @@
 }
 
 .p5-editor .CodeMirror-cursor {
-  border-left: 1px solid var(--p5e-accent);
+  border-left: 1px solid #333;
 }
 
-.p5-editor .CodeMirror-selected {
-  background: rgba(255, 0, 125, 0.15);
-}
-
+.p5-editor .CodeMirror-selected,
 .p5-editor .CodeMirror-focused .CodeMirror-selected {
-  background: rgba(255, 0, 125, 0.22);
+  background: #d9d9d9;
 }
 
-/* Eigen, on-brand thema (zwart/wit + roze). */
+/* Thema = het officiële "p5-light"-palet van editor.p5js.org. */
 .cm-s-p5e.CodeMirror,
 .cm-s-p5e .CodeMirror-scroll {
-  background: #fff;
-  color: #000;
+  background: #fbfbfb;
+  color: #333;
 }
 
-.cm-s-p5e .CodeMirror-matchingbracket {
-  color: var(--p5e-accent);
-  font-weight: 600;
-}
+.cm-s-p5e .CodeMirror-matchingbracket { color: #333; font-weight: 600; }
 
-.cm-s-p5e .cm-comment { color: #9aa0a6; font-style: italic; }
+.cm-s-p5e .cm-comment    { color: #747474; }
 .cm-s-p5e .cm-keyword,
-.cm-s-p5e .cm-builtin   { color: var(--p5e-accent); }
-.cm-s-p5e .cm-string,
-.cm-s-p5e .cm-string-2  { color: #0a7d4f; }
-.cm-s-p5e .cm-number,
-.cm-s-p5e .cm-atom      { color: #0a7d4f; }
+.cm-s-p5e .cm-operator   { color: #7a5a3a; }
+.cm-s-p5e .cm-string     { color: #47820a; }
+.cm-s-p5e .cm-string-2   { color: #a06801; }
 .cm-s-p5e .cm-def,
 .cm-s-p5e .cm-variable,
+.cm-s-p5e .cm-builtin,
+.cm-s-p5e .cm-qualifier  { color: #0b7ca9; }
+.cm-s-p5e .cm-atom,
+.cm-s-p5e .cm-tag        { color: #d52889; }
+.cm-s-p5e .cm-number,
 .cm-s-p5e .cm-variable-2,
 .cm-s-p5e .cm-property,
-.cm-s-p5e .cm-operator  { color: #000; }
+.cm-s-p5e .cm-attribute  { color: #333; }
+.cm-s-p5e .cm-error      { color: #f00; }
 
 /* Stapel op smalle schermen. */
 @media (max-width: 700px) {
