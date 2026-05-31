@@ -7,9 +7,17 @@ aan") zonder de hele code bloot te geven.
 
 ## Gebruik
 
-1. Link de bestanden in:
+1. Link de bestanden in. Zet de **CodeMirror-tags vóór** `p5-editor.js`
+   (optioneel — zonder valt elk veld terug op een gewone textarea):
 
    ```html
+   <!-- CodeMirror 5 — syntax highlighting (optioneel). -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css">
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/closebrackets.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/matchbrackets.js"></script>
+
    <link rel="stylesheet" href="p5-editor.css">
    <script src="p5-editor.js"></script>
    ```

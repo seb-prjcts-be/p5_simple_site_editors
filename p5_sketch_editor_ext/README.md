@@ -8,9 +8,21 @@ De startinhoud komt uit **echte losse bestanden** die naast elkaar in de map sta
 
 ## Gebruik
 
-1. Kopieer `p5-editor.css` en `p5-editor.js` naar je pagina en link ze in:
+1. Kopieer `p5-editor.css` en `p5-editor.js` naar je pagina en link ze in.
+   Zet de **CodeMirror-tags vóór** `p5-editor.js` (optioneel — zonder valt
+   elke tab terug op een gewone textarea). Let op: drie modes, één per tab:
 
    ```html
+   <!-- CodeMirror 5 — syntax highlighting (optioneel). -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css">
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/css/css.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/xml/xml.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/htmlmixed/htmlmixed.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/closebrackets.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/matchbrackets.js"></script>
+
    <link rel="stylesheet" href="p5-editor.css">
    <script src="p5-editor.js"></script>
    ```
