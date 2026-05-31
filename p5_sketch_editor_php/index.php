@@ -157,15 +157,15 @@ function starter_html(): string
         . "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
         . "  <link rel=\"stylesheet\" href=\"style.css\">\n"
         . "  <script src=\"https://cdn.jsdelivr.net/npm/p5@2.2.3/lib/p5.min.js\"></script>\n"
-        . "</head>\n<body>\n  <main id=\"sketch\"></main>\n  <script src=\"script.js\"></script>\n</body>\n</html>\n";
+        . "</head>\n<body>\n  <script src=\"script.js\"></script>\n</body>\n</html>\n";
 }
 function starter_css(): string
 {
-    return "body { margin: 0; background: #fff; }\n#sketch { display: block; }\n";
+    return "body { margin: 0; background: #fff; }\n";
 }
 function starter_js(): string
 {
-    return "function setup() {\n  const c = createCanvas(400, 400);\n  c.parent('sketch');\n  noStroke();\n}\n\n"
+    return "function setup() {\n  createCanvas(400, 400);\n  noStroke();\n}\n\n"
         . "function draw() {\n  background(20);\n  fill(255, 0, 125);\n  circle(mouseX, mouseY, 50);\n}\n";
 }
 
