@@ -250,7 +250,7 @@ body.ed-resizing #prev {
   border: none;
   resize: none;
   outline: none;
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", "Courier New", monospace;
   font-size: 13px;
   line-height: 1.5;
   tab-size: 2;
@@ -261,7 +261,7 @@ body.ed-resizing #prev {
 .editor-wrap .CodeMirror {
   flex: 1;
   height: 100%;
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", "Courier New", monospace;
   font-size: 13px;
   line-height: 1.5;
 }

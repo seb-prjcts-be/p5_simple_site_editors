@@ -91,7 +91,7 @@
   border-right: 1px solid var(--p5e-border);
   resize: none;
   outline: none;
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", "Courier New", monospace;
   font-size: 14px;
   line-height: 1.5;
   tab-size: 2;
@@ -109,7 +109,7 @@
   flex: 1;
   height: auto;                       /* groeit mee; min-hoogte via scroll */
   border-right: 1px solid var(--p5e-border);
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", "Courier New", monospace;
   font-size: 14px;
   line-height: 1.5;
 }

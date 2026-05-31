@@ -407,6 +407,7 @@ $langUrl = fn($l) => 'index.php?dir=' . rawurlencode($dirRel) . '&file=' . rawur
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $h($activeFile) ?> — p5 editor (php)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css">
 <link rel="stylesheet" href="editor.css">
 </head>

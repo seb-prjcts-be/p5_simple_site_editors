@@ -104,7 +104,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0.6rem 0.7rem;
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", "Courier New", monospace;
   font-size: 14px;
   line-height: 1.5;
   tab-size: 2;
@@ -133,7 +133,7 @@
 .p5-editor .CodeMirror {
   height: auto;                       /* groeit mee met de inhoud */
   border: 1px solid var(--p5e-border);
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", "Courier New", monospace;
   font-size: 14px;
   line-height: 1.5;
 }
